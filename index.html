@@ -6,17 +6,79 @@
   <title>GTA VI Tracker</title>
   <style>
     body {
-      background-color: #0b0710;
+      background-color: #0b0710; /* Dark mode base */
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Keep raindrops in place */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* 1. BLURRED VICE CITY BACKGROUND */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://imgur.com/vHqY7Z1.jpg'); /* New Vice City Night Scene */
+      background-size: cover;
+      background-position: center;
+      filter: blur(10px) brightness(0.7); /* Applied Blur and Darkening */
+      transform: scale(1.1); /* Prevents white edges from blur */
+      z-index: -3;
+    }
+
+    /* 2. LOGO (TOP LEFT) */
+    .logo-container {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+    }
+    .logo-container img {
+      width: 150px; /* Perfect size */
+      height: auto;
+    }
+
+    /* 3. TRICKLING RAINDROPS LAYER */
+    #rain {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      pointer-events: none; /* Can click through it */
+    }
+    .drop {
+      background: rgba(255, 255, 255, 0.3);
+      width: 2px;
+      height: 15px;
+      position: absolute;
+      bottom: 200px; /* Start position */
+      border-radius: 50% / 10%;
+      animation: fall linear;
+    }
+    @keyframes fall {
+      to { margin-top: 100vh; }
+    }
+
+    /* MAIN CONTENT */
+    .main-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      margin: 0;
-      padding: 20px;
+      height: 100vh;
+      width: 100%;
+      z-index: 5;
     }
+
     h1 {
       font-size: 3rem;
       background: linear-gradient(45deg, #ff007f, #ff8c00, #9b51e0);
@@ -27,9 +89,10 @@
       letter-spacing: 2px;
     }
     .subtitle {
-      color: #aaa;
+      color: #ccc;
       margin-bottom: 20px;
       font-size: 0.9rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
     }
     .countdown-container {
       display: flex;
@@ -37,13 +100,14 @@
       margin: 20px 0;
     }
     .time-box {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(11, 7, 16, 0.6); /* Slightly visible */
       border: 1px solid #ff007f;
       box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
       padding: 20px;
       border-radius: 10px;
       text-align: center;
       min-width: 70px;
+      backdrop-filter: blur(2px); /* Makes content clearer over rain */
     }
     .time-box span {
       display: block;
@@ -54,13 +118,13 @@
     .label {
       font-size: 0.8rem;
       text-transform: uppercase;
-      color: #aaa;
+      color: #ccc;
     }
     .tracker-section {
       width: 100%;
       max-width: 600px;
       margin-top: 30px;
-      background: rgba(20, 15, 30, 0.8);
+      background: rgba(20, 15, 30, 0.9); /* Dark and opaque */
       border-radius: 10px;
       padding: 20px;
       border: 1px solid #332244;
@@ -83,27 +147,41 @@
 </head>
 <body>
 
-  <h1>Grand Theft Auto VI</h1>
-  <p class="subtitle">Launch Target: Nov 18, 2026 at 10:00 PM PDT</p>
+  <!-- 1. Blurred Background Image -->
+  <div class="background"></div>
 
-  <div class="countdown-container">
-    <div class="time-box"><span id="days">00</span><div class="label">Days</div></div>
-    <div class="time-box"><span id="hours">00</span><div class="label">Hours</div></div>
-    <div class="time-box"><span id="minutes">00</span><div class="label">Mins</div></div>
-    <div class="time-box"><span id="seconds">00</span><div class="label">Secs</div></div>
+  <!-- 2. Logo (PNG) -->
+  <div class="logo-container">
+    <img src="https://i.imgur.com/D4sT79B.png" alt="GTA VI Logo">
   </div>
 
-  <div class="tracker-section">
-    <h3 class="tracker-title">My Checklist & Notes</h3>
-    <ul>
-      <li><input type="checkbox"> Watch Official Trailers</li>
-      <li><input type="checkbox"> Pre-order Game</li>
-      <li><input type="checkbox"> Clear SSD Storage Space</li>
-    </ul>
+  <!-- 3. Raindrops Canvas Layer -->
+  <canvas id="rain"></canvas>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <h1>Grand Theft Auto VI</h1>
+    <p class="subtitle">Launch Target: Nov 18, 2026 at 10:00 PM PDT</p>
+
+    <div class="countdown-container">
+      <div class="time-box"><span id="days">00</span><div class="label">Days</div></div>
+      <div class="time-box"><span id="hours">00</span><div class="label">Hours</div></div>
+      <div class="time-box"><span id="minutes">00</span><div class="label">Mins</div></div>
+      <div class="time-box"><span id="seconds">00</span><div class="label">Secs</div></div>
+    </div>
+
+    <div class="tracker-section">
+      <h3 class="tracker-title">My Checklist & Notes</h3>
+      <ul>
+        <li><input type="checkbox"> Watch Official Trailers</li>
+        <li><input type="checkbox"> Pre-order Game</li>
+        <li><input type="checkbox"> Clear SSD Storage Space</li>
+      </ul>
+    </div>
   </div>
 
   <script>
-    // Exact launch time set to Nov 18, 2026, 22:00:00 UTC-7 (PDT)
+    // --- Countdown Timer Logic ---
     const releaseDate = new Date('2026-11-18T22:00:00-07:00').getTime();
 
     function updateTimer() {
@@ -125,9 +203,67 @@
       document.getElementById('minutes').innerText = m < 10 ? '0' + m : m;
       document.getElementById('seconds').innerText = s < 10 ? '0' + s : s;
     }
-
     setInterval(updateTimer, 1000);
     updateTimer();
+
+
+    // --- Trickling Raindrops Logic (Realtime) ---
+    const canvas = document.getElementById('rain');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    let rain = [];
+    class Drop {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = -100; // Start off screen
+        this.vy = Math.random() * 5 + 5; // Fall speed
+        this.len = Math.random() * 10 + 10; // Drop length
+      }
+      draw() {
+        ctx.beginPath();
+        ctx.moveTo(this.x, this.y);
+        ctx.lineTo(this.x, this.y + this.len);
+        ctx.strokeStyle = 'rgba(174, 194, 224, 0.3)'; // Rain color
+        ctx.lineWidth = 1;
+        ctx.lineCap = 'round';
+        ctx.stroke();
+      }
+      update() {
+        this.y += this.vy;
+        if (this.y > canvas.height) { // Reset if off bottom
+          this.y = -100;
+          this.x = Math.random() * canvas.width;
+        }
+      }
+    }
+
+    function initRain() {
+      for (let i = 0; i < 150; i++) { // How many drops
+        rain.push(new Drop());
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frame
+      rain.forEach(drop => {
+        drop.update();
+        drop.draw();
+      });
+      requestAnimationFrame(animate); // Keep animating
+    }
+
+    initRain();
+    animate();
+
+    // Adjust rain if window is resized
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      rain = [];
+      initRain();
+    });
   </script>
 </body>
 </html>
