@@ -321,7 +321,7 @@
 
   <div class="main-content">
     <h1>GRAND THEFT AUTO VI</h1>
-    <p class="subtitle">Launch Date: Nov 19, 2026</p>
+    <p class="subtitle">Launch Date: Nov 18, 2026 at 10:00 PM</p>
 
     <div class="countdown-container">
       <div class="time-box"><span id="days">00</span><div class="label">Days</div></div>
@@ -372,7 +372,8 @@
   </div>
 
   <script>
-    const releaseDate = new Date('2026-11-19T00:00:00-07:00').getTime();
+    // Set for Nov 18, 2026 at 22:00:00 (10:00 PM)
+    const releaseDate = new Date('2026-11-18T22:00:00').getTime();
 
     function updateTimer() {
       const now = new Date().getTime();
@@ -452,7 +453,7 @@
 
             newsEl.innerHTML = `
               <div class="news-header-meta">
-                <span class="news-source">Rockstar Verified</span>
+                <span class="news-source">${item.source || 'Verified News'}</span>
                 <span class="news-date">${formattedDate}</span>
               </div>
               <div class="news-title-text">${item.title}</div>
@@ -468,7 +469,7 @@
     }
 
     fetchBackendNews();
-    setInterval(fetchBackendNews, 5 * 60 * 1000); // Live ping every 5 mins
+    setInterval(fetchBackendNews, 5 * 60 * 1000);
 
     // --- GLASS RAIN PHYSICS ---
     const canvas = document.getElementById('rain');
