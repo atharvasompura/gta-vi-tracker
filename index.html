@@ -80,10 +80,11 @@
       z-index: 5;
     }
 
-    /* GTA PRICEDOWN TITLE */
+    /* GTA PRICEDOWN TITLE - ALL CAPS */
     h1 {
       font-family: 'Pricedown', sans-serif;
       font-size: 4rem;
+      text-transform: uppercase;
       background: linear-gradient(45deg, #ff007f, #ff8c00, #9b51e0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -197,17 +198,21 @@
       border-color: rgba(255, 0, 127, 0.3);
     }
 
+    /* PERFECTLY CENTERED CHECKBOXES */
     .check-item input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 20px;
+      height: 20px;
       border: 2px solid rgba(255, 255, 255, 0.4);
-      border-radius: 5px;
+      border-radius: 6px;
       outline: none;
       cursor: pointer;
       margin-right: 14px;
-      position: relative;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       transition: all 0.2s ease;
     }
     .check-item input[type="checkbox"]:checked {
@@ -216,13 +221,13 @@
       box-shadow: 0 0 8px rgba(255, 0, 127, 0.6);
     }
     .check-item input[type="checkbox"]:checked::after {
-      content: '✓';
-      position: absolute;
-      color: white;
-      font-size: 12px;
-      top: -2px;
-      left: 3px;
-      font-weight: bold;
+      content: '';
+      width: 5px;
+      height: 10px;
+      border: solid white;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-bottom: 2px;
     }
     .check-item span {
       font-size: 0.85rem;
@@ -248,7 +253,7 @@
   <canvas id="rain"></canvas>
 
   <div class="main-content">
-    <h1>Grand Theft Auto VI</h1>
+    <h1>GRAND THEFT AUTO VI</h1>
     <p class="subtitle">Launch Date: Nov 18, 2026 at 10:00 PM PDT</p>
 
     <div class="countdown-container">
@@ -310,7 +315,7 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-    // --- Dynamic Progress Calculator (Ratio Format) ---
+    // --- Dynamic Progress Calculator ---
     function updateProgress() {
       const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
       const total = checkboxes.length;
@@ -326,83 +331,121 @@
       document.getElementById('progress-percent').innerText = `${percent}%`;
     }
 
-    // --- Photo-Realistic Window Rain Engine ---
+    // --- PHOTOREALISTIC GLASS RAIN SIMULATION ---
     const canvas = document.getElementById('rain');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Static condensed beads
-    const staticBeads = Array.from({ length: 400 }, () => ({
+    // Static condensed glass beads
+    const staticBeads = Array.from({ length: 350 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: Math.random() * 2 + 0.8,
-      alpha: Math.random() * 0.4 + 0.2
+      r: Math.random() * 1.8 + 0.6,
+      alpha: Math.random() * 0.35 + 0.15
     }));
 
-    // Sliding droplets & rivulets
-    class WindowRivulet {
+    // Dynamic Sliding Water Rivulets
+    class GlassStreak {
       constructor() {
         this.reset();
       }
+
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = -20;
-        this.r = Math.random() * 3 + 2;
-        this.vy = Math.random() * 2 + 1;
-        this.path = [];
-        this.wiggle = (Math.random() - 0.5) * 1.5;
+        this.y = -30;
+        this.r = Math.random() * 2.2 + 1.2;
+        this.vy = 0;
+        this.speedLimit = Math.random() * 3 + 1.5;
+        this.streak = [];
+        this.pauseTimer = Math.random() * 40;
       }
+
       update() {
+        if (this.pauseTimer > 0) {
+          this.pauseTimer--;
+          this.vy = 0;
+        } else {
+          this.vy += 0.15;
+          if (this.vy > this.speedLimit) this.vy = this.speedLimit;
+
+          // Occasionally pause due to glass friction
+          if (Math.random() < 0.015) {
+            this.pauseTimer = Math.random() * 30 + 10;
+          }
+        }
+
         this.y += this.vy;
-        if (Math.random() < 0.2) this.wiggle = (Math.random() - 0.5) * 1.5;
-        this.x += this.wiggle;
 
-        this.path.push({ x: this.x, y: this.y, r: this.r * 0.7, alpha: 0.3 });
-        if (this.path.length > 40) this.path.shift();
+        // Leave narrow, realistic wet trail points behind
+        if (this.vy > 0.2) {
+          this.streak.push({
+            x: this.x + (Math.random() - 0.5) * 0.5,
+            y: this.y,
+            w: this.r * 0.8,
+            alpha: 0.25
+          });
+        }
 
-        if (this.y > canvas.height + 50) this.reset();
+        // Decay streak opacity gradually
+        for (let i = 0; i < this.streak.length; i++) {
+          this.streak[i].alpha -= 0.0015;
+          if (this.streak[i].alpha <= 0) {
+            this.streak.splice(i, 1);
+            i--;
+          }
+        }
+
+        if (this.y > canvas.height + 40) this.reset();
       }
+
       draw() {
-        // Draw trailing rivulet streak
-        ctx.beginPath();
-        for (let i = 0; i < this.path.length; i++) {
-          const pt = this.path[i];
-          ctx.fillStyle = `rgba(180, 210, 240, ${pt.alpha})`;
-          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
+        // Draw trailing wet streak on window pane
+        for (let i = 0; i < this.streak.length; i++) {
+          const s = this.streak[i];
+          ctx.beginPath();
+          ctx.fillStyle = `rgba(220, 235, 255, ${s.alpha})`;
+          ctx.rect(s.x - s.w / 2, s.y, s.w, 2);
           ctx.fill();
         }
-        // Head droplet
+
+        // Draw leading water drop (tear shape refract effect)
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Highlight glint
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+        ctx.arc(this.x - this.r * 0.3, this.y - this.r * 0.3, this.r * 0.25, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    const rivulets = Array.from({ length: 35 }, () => new WindowRivulet());
+    const streaks = Array.from({ length: 45 }, () => new GlassStreak());
 
-    function animateWindowRain() {
+    function animateRain() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render static beads
+      // Render stationary droplets
       staticBeads.forEach(b => {
         ctx.beginPath();
-        ctx.fillStyle = `rgba(200, 220, 255, ${b.alpha})`;
+        ctx.fillStyle = `rgba(210, 230, 255, ${b.alpha})`;
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
         ctx.fill();
       });
 
       // Render rivulets
-      rivulets.forEach(r => {
-        r.update();
-        r.draw();
+      streaks.forEach(s => {
+        s.update();
+        s.draw();
       });
 
-      requestAnimationFrame(animateWindowRain);
+      requestAnimationFrame(animateRain);
     }
 
-    animateWindowRain();
+    animateRain();
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
