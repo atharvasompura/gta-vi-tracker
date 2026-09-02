@@ -315,15 +315,19 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-    // --- Dynamic Progress Calculator ---
+    // --- Dynamic Progress Calculator & Local Storage ---
     function updateProgress() {
       const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
       const total = checkboxes.length;
       let checked = 0;
+      const savedStates = [];
 
-      checkboxes.forEach(cb => {
+      checkboxes.forEach((cb) => {
+        savedStates.push(cb.checked);
         if (cb.checked) checked++;
       });
+
+      localStorage.setItem('gtavi_checklist_states', JSON.stringify(savedStates));
 
       const percent = Math.round((checked / total) * 100);
 
@@ -331,121 +335,166 @@
       document.getElementById('progress-percent').innerText = `${percent}%`;
     }
 
-    // --- PHOTOREALISTIC GLASS RAIN SIMULATION ---
+    function loadSavedProgress() {
+      const saved = localStorage.getItem('gtavi_checklist_states');
+      if (saved) {
+        const states = JSON.parse(saved);
+        const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+        checkboxes.forEach((cb, index) => {
+          if (states[index] !== undefined) {
+            cb.checked = states[index];
+          }
+        });
+      }
+      updateProgress();
+    }
+
+    loadSavedProgress();
+
+    // --- ADVANCED REALISTIC GLASS FLUID PHYSICS ENGINE ---
     const canvas = document.getElementById('rain');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Static condensed glass beads
-    const staticBeads = Array.from({ length: 350 }, () => ({
+    // Static ambient water beads on glass
+    const ambientBeads = Array.from({ length: 450 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      r: Math.random() * 1.8 + 0.6,
-      alpha: Math.random() * 0.35 + 0.15
+      r: Math.random() * 2.8 + 0.8,
+      alpha: Math.random() * 0.4 + 0.2
     }));
 
-    // Dynamic Sliding Water Rivulets
-    class GlassStreak {
+    // Dynamic trickling water drops with surface tension & winding paths
+    class RealisticWindowDrop {
       constructor() {
         this.reset();
       }
 
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = -30;
-        this.r = Math.random() * 2.2 + 1.2;
+        this.y = -40;
+        this.r = Math.random() * 3.5 + 2.5; // Thicker, substantial drop radius
         this.vy = 0;
-        this.speedLimit = Math.random() * 3 + 1.5;
-        this.streak = [];
-        this.pauseTimer = Math.random() * 40;
+        this.vx = 0;
+        this.speedLimit = Math.random() * 4 + 2.5;
+        this.pauseTimer = Math.random() * 50;
+        this.trail = [];
+        this.wigglePhase = Math.random() * Math.PI * 2;
+        this.wiggleFrequency = Math.random() * 0.08 + 0.03;
       }
 
       update() {
+        // Friction & hesitation physics
         if (this.pauseTimer > 0) {
           this.pauseTimer--;
           this.vy = 0;
+          this.vx = 0;
         } else {
-          this.vy += 0.15;
+          // Accelerate down under gravity
+          this.vy += 0.22;
           if (this.vy > this.speedLimit) this.vy = this.speedLimit;
 
-          // Occasionally pause due to glass friction
-          if (Math.random() < 0.015) {
-            this.pauseTimer = Math.random() * 30 + 10;
+          // Organic winding trajectory (swaying sideways)
+          this.wigglePhase += this.wiggleFrequency;
+          this.vx = Math.sin(this.wigglePhase) * 1.2;
+
+          // Random glass friction pause
+          if (Math.random() < 0.012) {
+            this.pauseTimer = Math.random() * 35 + 10;
           }
         }
 
+        this.x += this.vx;
         this.y += this.vy;
 
-        // Leave narrow, realistic wet trail points behind
-        if (this.vy > 0.2) {
-          this.streak.push({
-            x: this.x + (Math.random() - 0.5) * 0.5,
-            y: this.y,
-            w: this.r * 0.8,
-            alpha: 0.25
+        // Leave tiny residual droplets along trail path
+        if (this.vy > 0.5 && Math.random() < 0.45) {
+          this.trail.push({
+            x: this.x + (Math.random() - 0.5) * (this.r * 0.6),
+            y: this.y - this.r * 0.5,
+            r: Math.random() * (this.r * 0.4) + 0.8,
+            alpha: 0.5
           });
         }
 
-        // Decay streak opacity gradually
-        for (let i = 0; i < this.streak.length; i++) {
-          this.streak[i].alpha -= 0.0015;
-          if (this.streak[i].alpha <= 0) {
-            this.streak.splice(i, 1);
+        // Fade residual trail droplets over time
+        for (let i = 0; i < this.trail.length; i++) {
+          this.trail[i].alpha -= 0.003;
+          if (this.trail[i].alpha <= 0) {
+            this.trail.splice(i, 1);
             i--;
           }
         }
 
-        if (this.y > canvas.height + 40) this.reset();
+        if (this.y > canvas.height + 60) this.reset();
       }
 
       draw() {
-        // Draw trailing wet streak on window pane
-        for (let i = 0; i < this.streak.length; i++) {
-          const s = this.streak[i];
+        // Render trail water droplets left on glass
+        for (let i = 0; i < this.trail.length; i++) {
+          const t = this.trail[i];
           ctx.beginPath();
-          ctx.fillStyle = `rgba(220, 235, 255, ${s.alpha})`;
-          ctx.rect(s.x - s.w / 2, s.y, s.w, 2);
+          ctx.fillStyle = `rgba(190, 215, 245, ${t.alpha})`;
+          ctx.arc(t.x, t.y, t.r, 0, Math.PI * 2);
           ctx.fill();
         }
 
-        // Draw leading water drop (tear shape refract effect)
+        // Render leading trickling water drop with 3D refraction optics
+        const x = this.x;
+        const y = this.y;
+        const r = this.r;
+
+        // Dark optical refraction rim
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.65)';
-        ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(10, 15, 25, 0.45)';
+        ctx.arc(x, y + 1, r + 0.5, 0, Math.PI * 2);
         ctx.fill();
 
-        // Highlight glint
+        // Main water body
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.arc(this.x - this.r * 0.3, this.y - this.r * 0.3, this.r * 0.25, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(215, 235, 255, 0.6)';
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Specular highlight glint (top left light reflection)
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.arc(x - r * 0.35, y - r * 0.35, r * 0.3, 0, Math.PI * 2);
         ctx.fill();
       }
     }
 
-    const streaks = Array.from({ length: 45 }, () => new GlassStreak());
+    const waterDrops = Array.from({ length: 40 }, () => new RealisticWindowDrop());
 
-    function animateRain() {
+    function renderGlassWater() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render stationary droplets
-      staticBeads.forEach(b => {
+      // Render static ambient beads with refraction rings
+      ambientBeads.forEach(b => {
+        // Shadow/refraction edge
         ctx.beginPath();
-        ctx.fillStyle = `rgba(210, 230, 255, ${b.alpha})`;
+        ctx.fillStyle = `rgba(0, 0, 0, ${b.alpha * 0.6})`;
+        ctx.arc(b.x, b.y + 0.8, b.r + 0.4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Water bead body
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(200, 225, 255, ${b.alpha})`;
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
         ctx.fill();
       });
 
-      // Render rivulets
-      streaks.forEach(s => {
-        s.update();
-        s.draw();
+      // Render dynamic glass droplets
+      waterDrops.forEach(drop => {
+        drop.update();
+        drop.draw();
       });
 
-      requestAnimationFrame(animateRain);
+      requestAnimationFrame(renderGlassWater);
     }
 
-    animateRain();
+    renderGlassWater();
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
