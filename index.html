@@ -6,34 +6,34 @@
   <title>GTA VI Tracker</title>
   <style>
     body {
-      background-color: #0b0710; /* Dark mode base */
+      background-color: #0b0710;
       color: #ffffff;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       margin: 0;
       padding: 0;
-      overflow: hidden; /* Keep raindrops in place */
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* 1. BLURRED VICE CITY BACKGROUND */
+    /* BLURRED LOCAL BACKGROUND IMAGE (.jpeg) */
     .background {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url('https://imgur.com/vHqY7Z1.jpg'); /* New Vice City Night Scene */
+      background-image: url('background.jpeg');
       background-size: cover;
       background-position: center;
-      filter: blur(10px) brightness(0.7); /* Applied Blur and Darkening */
-      transform: scale(1.1); /* Prevents white edges from blur */
+      filter: blur(10px) brightness(0.7);
+      transform: scale(1.1);
       z-index: -3;
     }
 
-    /* 2. LOGO (TOP LEFT) */
+    /* LOCAL LOGO (TOP LEFT) */
     .logo-container {
       position: absolute;
       top: 20px;
@@ -41,11 +41,11 @@
       z-index: 10;
     }
     .logo-container img {
-      width: 150px; /* Perfect size */
+      width: 150px;
       height: auto;
     }
 
-    /* 3. TRICKLING RAINDROPS LAYER */
+    /* TRICKLING RAINDROPS LAYER */
     #rain {
       position: fixed;
       top: 0;
@@ -53,19 +53,7 @@
       width: 100%;
       height: 100%;
       z-index: -1;
-      pointer-events: none; /* Can click through it */
-    }
-    .drop {
-      background: rgba(255, 255, 255, 0.3);
-      width: 2px;
-      height: 15px;
-      position: absolute;
-      bottom: 200px; /* Start position */
-      border-radius: 50% / 10%;
-      animation: fall linear;
-    }
-    @keyframes fall {
-      to { margin-top: 100vh; }
+      pointer-events: none;
     }
 
     /* MAIN CONTENT */
@@ -100,14 +88,14 @@
       margin: 20px 0;
     }
     .time-box {
-      background: rgba(11, 7, 16, 0.6); /* Slightly visible */
+      background: rgba(11, 7, 16, 0.6);
       border: 1px solid #ff007f;
       box-shadow: 0 0 15px rgba(255, 0, 127, 0.3);
       padding: 20px;
       border-radius: 10px;
       text-align: center;
       min-width: 70px;
-      backdrop-filter: blur(2px); /* Makes content clearer over rain */
+      backdrop-filter: blur(2px);
     }
     .time-box span {
       display: block;
@@ -124,7 +112,7 @@
       width: 100%;
       max-width: 600px;
       margin-top: 30px;
-      background: rgba(20, 15, 30, 0.9); /* Dark and opaque */
+      background: rgba(20, 15, 30, 0.9);
       border-radius: 10px;
       padding: 20px;
       border: 1px solid #332244;
@@ -147,15 +135,15 @@
 </head>
 <body>
 
-  <!-- 1. Blurred Background Image -->
+  <!-- Blurred Background Image -->
   <div class="background"></div>
 
-  <!-- 2. Logo (PNG) -->
+  <!-- Local Logo (.webp) -->
   <div class="logo-container">
-    <img src="https://i.imgur.com/D4sT79B.png" alt="GTA VI Logo">
+    <img src="logo.webp" alt="GTA VI Logo">
   </div>
 
-  <!-- 3. Raindrops Canvas Layer -->
+  <!-- Raindrops Canvas Layer -->
   <canvas id="rain"></canvas>
 
   <!-- Main Content -->
@@ -206,8 +194,7 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-
-    // --- Trickling Raindrops Logic (Realtime) ---
+    // --- Raindrops Logic ---
     const canvas = document.getElementById('rain');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -217,22 +204,22 @@
     class Drop {
       constructor() {
         this.x = Math.random() * canvas.width;
-        this.y = -100; // Start off screen
-        this.vy = Math.random() * 5 + 5; // Fall speed
-        this.len = Math.random() * 10 + 10; // Drop length
+        this.y = -100;
+        this.vy = Math.random() * 5 + 5;
+        this.len = Math.random() * 10 + 10;
       }
       draw() {
         ctx.beginPath();
         ctx.moveTo(this.x, this.y);
         ctx.lineTo(this.x, this.y + this.len);
-        ctx.strokeStyle = 'rgba(174, 194, 224, 0.3)'; // Rain color
+        ctx.strokeStyle = 'rgba(174, 194, 224, 0.3)';
         ctx.lineWidth = 1;
         ctx.lineCap = 'round';
         ctx.stroke();
       }
       update() {
         this.y += this.vy;
-        if (this.y > canvas.height) { // Reset if off bottom
+        if (this.y > canvas.height) {
           this.y = -100;
           this.x = Math.random() * canvas.width;
         }
@@ -240,24 +227,23 @@
     }
 
     function initRain() {
-      for (let i = 0; i < 150; i++) { // How many drops
+      for (let i = 0; i < 150; i++) {
         rain.push(new Drop());
       }
     }
 
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear previous frame
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       rain.forEach(drop => {
         drop.update();
         drop.draw();
       });
-      requestAnimationFrame(animate); // Keep animating
+      requestAnimationFrame(animate);
     }
 
     initRain();
     animate();
 
-    // Adjust rain if window is resized
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
