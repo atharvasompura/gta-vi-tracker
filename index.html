@@ -19,14 +19,13 @@
       font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow-x: hidden;
       display: flex;
       flex-direction: column;
       align-items: center;
       min-height: 100vh;
     }
 
-    /* BLURRED BACKGROUND IMAGE */
     .background {
       position: fixed;
       top: 0;
@@ -41,7 +40,6 @@
       z-index: -3;
     }
 
-    /* LOGO CONTAINER */
     .logo-container {
       position: absolute;
       top: 35px;
@@ -61,7 +59,6 @@
       display: block;
     }
 
-    /* GLASS RAIN CANVAS */
     #rain {
       position: fixed;
       top: 0;
@@ -72,18 +69,18 @@
       pointer-events: none;
     }
 
-    /* MAIN CONTENT */
     .main-content {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
+      min-height: 100vh;
       width: 100%;
       z-index: 5;
+      padding: 40px 0;
+      box-sizing: border-box;
     }
 
-    /* GTA PRICEDOWN TITLE - ALL CAPS */
     h1 {
       font-family: 'Pricedown', sans-serif;
       font-size: 4rem;
@@ -107,7 +104,6 @@
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
     }
 
-    /* COUNTDOWN TIMER */
     .countdown-container {
       display: flex;
       gap: 15px;
@@ -123,7 +119,6 @@
       min-width: 75px;
       backdrop-filter: blur(8px);
     }
-    /* IMPACT FONT SPECIFIED FOR TIMER NUMBERS ONLY */
     .time-box span {
       display: block;
       font-family: 'Impact', 'Arial Black', sans-serif;
@@ -142,9 +137,18 @@
       margin-top: 2px;
     }
 
-    /* TRACKER CARD */
-    .tracker-section {
+    .cards-wrapper {
+      display: flex;
+      gap: 20px;
       width: 90%;
+      max-width: 900px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .glass-card {
+      flex: 1;
+      min-width: 320px;
       max-width: 440px;
       background: rgba(15, 10, 25, 0.55);
       border-radius: 16px;
@@ -152,23 +156,24 @@
       border: 1px solid rgba(255, 255, 255, 0.08);
       backdrop-filter: blur(16px);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
     }
 
-    /* TRACKER HEADER WITH DYNAMIC STATS & PINK DOT */
-    .tracker-header {
+    .card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
       margin-bottom: 18px;
     }
-    .tracker-title {
+    .card-title {
       color: #ffffff;
       font-size: 0.85rem;
       text-transform: uppercase;
       letter-spacing: 2px;
       font-weight: 800;
     }
-    .tracker-stats {
+    .card-stats {
       display: flex;
       align-items: center;
       gap: 8px;
@@ -203,8 +208,6 @@
       background: rgba(255, 255, 255, 0.07);
       border-color: rgba(255, 0, 127, 0.3);
     }
-
-    /* PERFECTLY CENTERED CHECKBOXES */
     .check-item input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
@@ -240,11 +243,69 @@
       color: #d8d8d8;
       font-weight: 600;
       letter-spacing: 0.5px;
-      transition: color 0.2s ease;
     }
     .check-item input[type="checkbox"]:checked + span {
       text-decoration: line-through;
       color: #666;
+    }
+
+    .news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 240px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .news-list::-webkit-scrollbar {
+      width: 4px;
+    }
+    .news-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 0, 127, 0.5);
+      border-radius: 4px;
+    }
+    .news-item {
+      display: flex;
+      flex-direction: column;
+      padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.03);
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    .news-item:hover {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 0, 127, 0.3);
+    }
+    .news-header-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .news-source {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      font-weight: 800;
+      color: #ff8c00;
+      letter-spacing: 0.5px;
+    }
+    .news-date {
+      font-size: 0.65rem;
+      color: #888;
+    }
+    .news-title-text {
+      font-size: 0.8rem;
+      color: #e0e0e0;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+    .loading-text {
+      font-size: 0.8rem;
+      color: #888;
+      text-align: center;
+      padding: 20px 0;
     }
   </style>
 </head>
@@ -260,7 +321,7 @@
 
   <div class="main-content">
     <h1>GRAND THEFT AUTO VI</h1>
-    <p class="subtitle">Launch Date: Nov 18, 2026 at 10:00 PM PDT</p>
+    <p class="subtitle">Launch Date: Nov 19, 2026</p>
 
     <div class="countdown-container">
       <div class="time-box"><span id="days">00</span><div class="label">Days</div></div>
@@ -269,35 +330,49 @@
       <div class="time-box"><span id="seconds">00</span><div class="label">Secs</div></div>
     </div>
 
-    <div class="tracker-section">
-      <div class="tracker-header">
-        <span class="tracker-title">Progress Tracker</span>
-        <div class="tracker-stats">
-          <span id="remaining-count">0/3</span>
-          <span class="pink-dot"></span>
-          <span id="progress-percent">0%</span>
+    <div class="cards-wrapper">
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">Progress Tracker</span>
+          <div class="card-stats">
+            <span id="remaining-count">0/3</span>
+            <span class="pink-dot"></span>
+            <span id="progress-percent">0%</span>
+          </div>
+        </div>
+        <ul>
+          <label class="check-item">
+            <input type="checkbox" onchange="updateProgress()">
+            <span>Watch Official Trailers</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" onchange="updateProgress()">
+            <span>Pre-order Game</span>
+          </label>
+          <label class="check-item">
+            <input type="checkbox" onchange="updateProgress()">
+            <span>Clear SSD Storage Space</span>
+          </label>
+        </ul>
+      </div>
+
+      <div class="glass-card">
+        <div class="card-header">
+          <span class="card-title">Verified Updates</span>
+          <div class="card-stats">
+            <span>LIVE BACKEND</span>
+            <span class="pink-dot"></span>
+          </div>
+        </div>
+        <div class="news-list" id="news-container">
+          <div class="loading-text">Connecting to private backend server...</div>
         </div>
       </div>
-      <ul>
-        <label class="check-item">
-          <input type="checkbox" onchange="updateProgress()">
-          <span>Watch Official Trailers</span>
-        </label>
-        <label class="check-item">
-          <input type="checkbox" onchange="updateProgress()">
-          <span>Pre-order Game</span>
-        </label>
-        <label class="check-item">
-          <input type="checkbox" onchange="updateProgress()">
-          <span>Clear SSD Storage Space</span>
-        </label>
-      </ul>
     </div>
   </div>
 
   <script>
-    // --- Countdown Timer Logic ---
-    const releaseDate = new Date('2026-11-18T22:00:00-07:00').getTime();
+    const releaseDate = new Date('2026-11-19T00:00:00-07:00').getTime();
 
     function updateTimer() {
       const now = new Date().getTime();
@@ -321,7 +396,6 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
-    // --- Dynamic Progress Calculator & Local Storage ---
     function updateProgress() {
       const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
       const total = checkboxes.length;
@@ -334,7 +408,6 @@
       });
 
       localStorage.setItem('gtavi_checklist_states', JSON.stringify(savedStates));
-
       const percent = Math.round((checked / total) * 100);
 
       document.getElementById('remaining-count').innerText = `${checked}/${total}`;
@@ -354,10 +427,50 @@
       }
       updateProgress();
     }
-
     loadSavedProgress();
 
-    // --- REALISTIC PACE & ACCUMULATION FLUID PHYSICS ---
+    // --- PRIVATE BACKEND ENGINE LINKED TO RENDER ---
+    const BACKEND_URL = 'https://gta-backend-vy4k.onrender.com/api/news';
+
+    async function fetchBackendNews() {
+      const container = document.getElementById('news-container');
+      try {
+        const res = await fetch(BACKEND_URL);
+        const data = await res.json();
+
+        if (data.success && data.articles.length > 0) {
+          container.innerHTML = '';
+          data.articles.forEach(item => {
+            const dateObj = new Date(item.pubDate);
+            const formattedDate = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+
+            const newsEl = document.createElement('a');
+            newsEl.className = 'news-item';
+            newsEl.href = item.link;
+            newsEl.target = '_blank';
+            newsEl.rel = 'noopener noreferrer';
+
+            newsEl.innerHTML = `
+              <div class="news-header-meta">
+                <span class="news-source">Rockstar Verified</span>
+                <span class="news-date">${formattedDate}</span>
+              </div>
+              <div class="news-title-text">${item.title}</div>
+            `;
+            container.appendChild(newsEl);
+          });
+        } else {
+          container.innerHTML = `<div class="loading-text">No verified news at this moment.</div>`;
+        }
+      } catch (err) {
+        container.innerHTML = `<div class="loading-text">Server connecting... (Please check backend URL)</div>`;
+      }
+    }
+
+    fetchBackendNews();
+    setInterval(fetchBackendNews, 5 * 60 * 1000); // Live ping every 5 mins
+
+    // --- GLASS RAIN PHYSICS ---
     const canvas = document.getElementById('rain');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -371,9 +484,7 @@
     }));
 
     class SlowWindowDrop {
-      constructor() {
-        this.reset(true);
-      }
+      constructor() { this.reset(true); }
 
       reset(initial = false) {
         this.x = Math.random() * canvas.width;
@@ -394,9 +505,7 @@
       update() {
         if (!this.isTrickling) {
           this.accumulation += 0.2;
-          if (this.accumulation >= this.threshold) {
-            this.isTrickling = true;
-          }
+          if (this.accumulation >= this.threshold) this.isTrickling = true;
           return;
         }
 
