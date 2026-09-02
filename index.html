@@ -4,11 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>GTA VI Tracker</title>
+  
+  <!-- IMPORTS GTA STYLE FONTS -->
+  <link href="https://fonts.cdnfonts.com/css/pricedown" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
     body {
       background-color: #0b0710;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: 'Montserrat', sans-serif;
       margin: 0;
       padding: 0;
       overflow: hidden;
@@ -28,15 +33,15 @@
       background-image: url('background.jpeg');
       background-size: cover;
       background-position: center;
-      filter: blur(12px) brightness(0.65);
+      filter: blur(12px) brightness(0.6);
       transform: scale(1.1);
       z-index: -3;
     }
 
-    /* LOGO IN ROUNDED WHITE BOX (MOVED DOWN ~3mm) */
+    /* LOGO CONTAINER */
     .logo-container {
       position: absolute;
-      top: 35px; /* Shifted down */
+      top: 35px;
       left: 25px;
       z-index: 10;
       background-color: #ffffff;
@@ -53,7 +58,7 @@
       display: block;
     }
 
-    /* TRICKLING GLASS RAIN CANVAS */
+    /* GLASS RAIN CANVAS */
     #rain {
       position: fixed;
       top: 0;
@@ -64,7 +69,7 @@
       pointer-events: none;
     }
 
-    /* MAIN CONTENT WRAPPER */
+    /* MAIN CONTENT */
     .main-content {
       display: flex;
       flex-direction: column;
@@ -75,15 +80,15 @@
       z-index: 5;
     }
 
-    /* MAIN TITLE WITH DROP SHADOW FOR READABILITY */
+    /* GTA PRICEDOWN TITLE */
     h1 {
-      font-size: 3.2rem;
+      font-family: 'Pricedown', sans-serif;
+      font-size: 4rem;
       background: linear-gradient(45deg, #ff007f, #ff8c00, #9b51e0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 4px;
-      text-transform: uppercase;
-      letter-spacing: 3px;
+      margin-bottom: 0px;
+      letter-spacing: 2px;
       filter: drop-shadow(0px 4px 12px rgba(0, 0, 0, 0.95)) drop-shadow(0px 2px 4px rgba(0, 0, 0, 1));
       text-align: center;
     }
@@ -91,14 +96,14 @@
     .subtitle {
       color: #e0e0e0;
       margin-bottom: 25px;
-      font-size: 0.95rem;
-      letter-spacing: 1px;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      font-weight: 500;
+      font-weight: 700;
       text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
     }
 
-    /* COUNTDOWN TIMER STYLING */
+    /* COUNTDOWN TIMER */
     .countdown-container {
       display: flex;
       gap: 15px;
@@ -116,20 +121,21 @@
     }
     .time-box span {
       display: block;
-      font-size: 2.5rem;
-      font-weight: 700;
+      font-family: 'Pricedown', sans-serif;
+      font-size: 2.8rem;
       color: #ff8c00;
       text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
     }
     .label {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       text-transform: uppercase;
       color: #aaa;
       letter-spacing: 1px;
-      margin-top: 4px;
+      font-weight: 600;
+      margin-top: 2px;
     }
 
-    /* MINIMALIST & AESTHETIC CHECKLIST CARD */
+    /* TRACKER CARD */
     .tracker-section {
       width: 90%;
       max-width: 440px;
@@ -140,28 +146,41 @@
       backdrop-filter: blur(16px);
       box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
     }
-    .tracker-title {
-      color: #ffffff;
-      font-size: 0.9rem;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      margin: 0 0 18px 0;
-      font-weight: 600;
+
+    /* TRACKER HEADER WITH DYNAMIC STATS & PINK DOT */
+    .tracker-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
+      margin-bottom: 18px;
     }
-    .tracker-title::after {
-      content: '';
-      flex-grow: 1;
-      height: 1px;
-      background: linear-gradient(90deg, #ff007f, transparent);
-      margin-left: 15px;
+    .tracker-title {
+      color: #ffffff;
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 800;
+    }
+    .tracker-stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #d8d8d8;
+      letter-spacing: 0.5px;
+    }
+    .pink-dot {
+      width: 6px;
+      height: 6px;
+      background-color: #ff007f;
+      border-radius: 50%;
+      box-shadow: 0 0 8px #ff007f;
+      display: inline-block;
     }
 
     ul { list-style: none; padding: 0; margin: 0; }
 
-    /* CUSTOM CHECKLIST ITEM LAYOUT */
     .check-item {
       display: flex;
       align-items: center;
@@ -178,7 +197,6 @@
       border-color: rgba(255, 0, 127, 0.3);
     }
 
-    /* CUSTOM AESTHETIC CHECKBOX */
     .check-item input[type="checkbox"] {
       appearance: none;
       -webkit-appearance: none;
@@ -202,36 +220,33 @@
       position: absolute;
       color: white;
       font-size: 12px;
-      top: -1px;
+      top: -2px;
       left: 3px;
       font-weight: bold;
     }
     .check-item span {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       color: #d8d8d8;
+      font-weight: 600;
       letter-spacing: 0.5px;
       transition: color 0.2s ease;
     }
     .check-item input[type="checkbox"]:checked + span {
       text-decoration: line-through;
-      color: #777;
+      color: #666;
     }
   </style>
 </head>
 <body>
 
-  <!-- Blurred Background -->
   <div class="background"></div>
 
-  <!-- Logo in White Box -->
   <div class="logo-container">
     <img src="logo.webp" alt="GTA VI Logo">
   </div>
 
-  <!-- Window Rain Canvas -->
   <canvas id="rain"></canvas>
 
-  <!-- Main Content -->
   <div class="main-content">
     <h1>Grand Theft Auto VI</h1>
     <p class="subtitle">Launch Date: Nov 18, 2026 at 10:00 PM PDT</p>
@@ -244,18 +259,25 @@
     </div>
 
     <div class="tracker-section">
-      <div class="tracker-title">Progress Tracker</div>
+      <div class="tracker-header">
+        <span class="tracker-title">Progress Tracker</span>
+        <div class="tracker-stats">
+          <span id="remaining-count">0/3</span>
+          <span class="pink-dot"></span>
+          <span id="progress-percent">0%</span>
+        </div>
+      </div>
       <ul>
         <label class="check-item">
-          <input type="checkbox">
+          <input type="checkbox" onchange="updateProgress()">
           <span>Watch Official Trailers</span>
         </label>
         <label class="check-item">
-          <input type="checkbox">
+          <input type="checkbox" onchange="updateProgress()">
           <span>Pre-order Game</span>
         </label>
         <label class="check-item">
-          <input type="checkbox">
+          <input type="checkbox" onchange="updateProgress()">
           <span>Clear SSD Storage Space</span>
         </label>
       </ul>
@@ -288,98 +310,99 @@
     setInterval(updateTimer, 1000);
     updateTimer();
 
+    // --- Dynamic Progress Calculator (Ratio Format) ---
+    function updateProgress() {
+      const checkboxes = document.querySelectorAll('.check-item input[type="checkbox"]');
+      const total = checkboxes.length;
+      let checked = 0;
 
-    // --- Realistic Glass Raindrops Logic ---
+      checkboxes.forEach(cb => {
+        if (cb.checked) checked++;
+      });
+
+      const percent = Math.round((checked / total) * 100);
+
+      document.getElementById('remaining-count').innerText = `${checked}/${total}`;
+      document.getElementById('progress-percent').innerText = `${percent}%`;
+    }
+
+    // --- Photo-Realistic Window Rain Engine ---
     const canvas = document.getElementById('rain');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    class GlassDrop {
+    // Static condensed beads
+    const staticBeads = Array.from({ length: 400 }, () => ({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      r: Math.random() * 2 + 0.8,
+      alpha: Math.random() * 0.4 + 0.2
+    }));
+
+    // Sliding droplets & rivulets
+    class WindowRivulet {
       constructor() {
         this.reset();
       }
-
       reset() {
         this.x = Math.random() * canvas.width;
-        this.y = Math.random() * canvas.height - canvas.height;
-        this.r = Math.random() * 2.5 + 1.5; // Droplet size
-        this.vy = 0; // Vertical speed (starts paused/sticky)
-        this.friction = Math.random() * 0.05 + 0.92;
-        this.gravity = Math.random() * 0.03 + 0.01;
-        this.trail = [];
+        this.y = -20;
+        this.r = Math.random() * 3 + 2;
+        this.vy = Math.random() * 2 + 1;
+        this.path = [];
+        this.wiggle = (Math.random() - 0.5) * 1.5;
       }
+      update() {
+        this.y += this.vy;
+        if (Math.random() < 0.2) this.wiggle = (Math.random() - 0.5) * 1.5;
+        this.x += this.wiggle;
 
+        this.path.push({ x: this.x, y: this.y, r: this.r * 0.7, alpha: 0.3 });
+        if (this.path.length > 40) this.path.shift();
+
+        if (this.y > canvas.height + 50) this.reset();
+      }
       draw() {
-        // Draw trailing water mark
+        // Draw trailing rivulet streak
         ctx.beginPath();
-        for (let i = 0; i < this.trail.length; i++) {
-          const point = this.trail[i];
-          ctx.fillStyle = `rgba(200, 225, 255, ${point.alpha})`;
-          ctx.arc(point.x, point.y, point.r * 0.7, 0, Math.PI * 2);
+        for (let i = 0; i < this.path.length; i++) {
+          const pt = this.path[i];
+          ctx.fillStyle = `rgba(180, 210, 240, ${pt.alpha})`;
+          ctx.arc(pt.x, pt.y, pt.r, 0, Math.PI * 2);
           ctx.fill();
         }
-
-        // Draw main trickling droplet
+        // Head droplet
         ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
         ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
         ctx.fill();
-
-        // Droplet highlight shine
-        ctx.beginPath();
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
-        ctx.arc(this.x - this.r * 0.3, this.y - this.r * 0.3, this.r * 0.3, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      update() {
-        // Simulates water sticking to glass until heavy enough
-        if (Math.random() < 0.03) {
-          this.vy += this.gravity * this.r;
-        }
-
-        this.vy *= this.friction;
-        this.y += this.vy;
-
-        // Leave trailing tiny water beads as it slides down
-        if (this.vy > 0.5 && Math.random() < 0.3) {
-          this.trail.push({
-            x: this.x + (Math.random() - 0.5),
-            y: this.y,
-            r: this.r * 0.5,
-            alpha: 0.3
-          });
-        }
-
-        // Fade trails over time
-        for (let i = 0; i < this.trail.length; i++) {
-          this.trail[i].alpha -= 0.005;
-          if (this.trail[i].alpha <= 0) {
-            this.trail.splice(i, 1);
-            i--;
-          }
-        }
-
-        // Reset drop when off screen
-        if (this.y > canvas.height + 20) {
-          this.reset();
-        }
       }
     }
 
-    const drops = Array.from({ length: 80 }, () => new GlassDrop());
+    const rivulets = Array.from({ length: 35 }, () => new WindowRivulet());
 
-    function animateRain() {
+    function animateWindowRain() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drops.forEach(drop => {
-        drop.update();
-        drop.draw();
+
+      // Render static beads
+      staticBeads.forEach(b => {
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(200, 220, 255, ${b.alpha})`;
+        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        ctx.fill();
       });
-      requestAnimationFrame(animateRain);
+
+      // Render rivulets
+      rivulets.forEach(r => {
+        r.update();
+        r.draw();
+      });
+
+      requestAnimationFrame(animateWindowRain);
     }
 
-    animateRain();
+    animateWindowRain();
 
     window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
