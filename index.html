@@ -120,14 +120,17 @@
       min-width: 75px;
       backdrop-filter: blur(8px);
     }
+    /* IMPACT FONT SPECIFIED FOR TIMER NUMBERS ONLY */
     .time-box span {
       display: block;
-      font-family: 'Pricedown', sans-serif;
+      font-family: 'Impact', 'Arial Black', sans-serif;
       font-size: 2.8rem;
       color: #ff8c00;
+      letter-spacing: 1px;
       text-shadow: 0 0 10px rgba(255, 140, 0, 0.3);
     }
     .label {
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.7rem;
       text-transform: uppercase;
       color: #aaa;
@@ -357,7 +360,6 @@
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // Stationary condensation beads resting on glass
     const staticBeads = Array.from({ length: 400 }, () => ({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
@@ -365,7 +367,6 @@
       alpha: Math.random() * 0.4 + 0.2
     }));
 
-    // Dynamic drops pinned by surface tension or trickling slowly down
     class SlowWindowDrop {
       constructor() {
         this.reset(true);
@@ -377,15 +378,10 @@
         this.r = Math.random() * 2.8 + 2.0;
         this.vy = 0;
         this.vx = 0;
-        
-        // Slower realistic velocity limit
         this.speedLimit = Math.random() * 0.8 + 0.4;
-        
-        // Pinned state vs Active state
         this.isTrickling = initial ? (Math.random() < 0.15) : (Math.random() < 0.35);
         this.accumulation = Math.random() * 100; 
-        this.threshold = Math.random() * 250 + 150; // Mass required to overcome friction
-        
+        this.threshold = Math.random() * 250 + 150;
         this.pauseTimer = 0;
         this.trail = [];
         this.wigglePhase = Math.random() * Math.PI * 2;
@@ -394,29 +390,24 @@
 
       update() {
         if (!this.isTrickling) {
-          // Stationary drop building mass gradually over time
           this.accumulation += 0.2;
           if (this.accumulation >= this.threshold) {
-            this.isTrickling = true; // Surface tension breaks
+            this.isTrickling = true;
           }
           return;
         }
 
-        // Trickling Logic with slow friction pauses
         if (this.pauseTimer > 0) {
           this.pauseTimer--;
           this.vy = 0;
           this.vx = 0;
         } else {
-          // Gentle downward acceleration
           this.vy += 0.03;
           if (this.vy > this.speedLimit) this.vy = this.speedLimit;
 
-          // Subtle organic lateral swaying
           this.wigglePhase += this.wiggleFrequency;
           this.vx = Math.sin(this.wigglePhase) * 0.3;
 
-          // Frequent realistic glass surface pauses
           if (Math.random() < 0.015) {
             this.pauseTimer = Math.floor(Math.random() * 80 + 30);
           }
@@ -425,7 +416,6 @@
         this.x += this.vx;
         this.y += this.vy;
 
-        // Leave subtle water traces behind
         if (this.vy > 0.1 && Math.random() < 0.3) {
           this.trail.push({
             x: this.x + (Math.random() - 0.5) * (this.r * 0.4),
@@ -435,7 +425,6 @@
           });
         }
 
-        // Fade residual trail droplets
         for (let i = 0; i < this.trail.length; i++) {
           this.trail[i].alpha -= 0.002;
           if (this.trail[i].alpha <= 0) {
@@ -448,7 +437,6 @@
       }
 
       draw() {
-        // Render residual trail droplets
         for (let i = 0; i < this.trail.length; i++) {
           const t = this.trail[i];
           ctx.beginPath();
@@ -457,24 +445,20 @@
           ctx.fill();
         }
 
-        // Render main droplet (Stationary or Trickling)
         const x = this.x;
         const y = this.y;
         const r = this.r;
 
-        // Outer optical edge
         ctx.beginPath();
         ctx.fillStyle = 'rgba(10, 15, 25, 0.4)';
         ctx.arc(x, y + 0.8, r + 0.4, 0, Math.PI * 2);
         ctx.fill();
 
-        // Water drop body
         ctx.beginPath();
         ctx.fillStyle = 'rgba(215, 235, 255, 0.55)';
         ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
 
-        // Specular highlight glint
         ctx.beginPath();
         ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
         ctx.arc(x - r * 0.3, y - r * 0.3, r * 0.28, 0, Math.PI * 2);
@@ -482,13 +466,11 @@
       }
     }
 
-    // Pool of total drops on glass (only 8-10 trickle actively at any given time)
     const windowDrops = Array.from({ length: 60 }, () => new SlowWindowDrop());
 
     function renderGlassWater() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Render static ambient beads
       staticBeads.forEach(b => {
         ctx.beginPath();
         ctx.fillStyle = `rgba(0, 0, 0, ${b.alpha * 0.5})`;
@@ -501,7 +483,6 @@
         ctx.fill();
       });
 
-      // Render & update dynamic drops
       windowDrops.forEach(drop => {
         drop.update();
         drop.draw();
